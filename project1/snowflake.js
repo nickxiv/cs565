@@ -48,11 +48,12 @@ window.onload = function init() {
         // draws left and right triangles
         divideTriangle(a, b, c, iterations);
 
+        // draws bottom triangle
         acFirstThird = mix(a, c, 1.0 / 3.0);
         acSecondThird = mix(a, c, 2.0 / 3.0);
         acTop = findTop(acFirstThird, acSecondThird, true);
         triangle(acFirstThird, acTop, acSecondThird);
-        // draws bottom triangle
+        
         divideTriangle(acFirstThird, acTop, acSecondThird, iterations - 1, true);
     }
 
@@ -74,7 +75,7 @@ window.onload = function init() {
     gl.bindBuffer( gl.ARRAY_BUFFER, bufferId );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
 
-    // Associate out shader variables with our data buffer
+    // Associate our shader variables with our data buffer
     
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
