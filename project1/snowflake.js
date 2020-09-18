@@ -6,19 +6,18 @@
 // The number of iterations is assigned to the global variable, iterations.
 
 // The most complex part is function findTop, in which we use vector rotation in order to find 
-// the apex of each equilateral triangle, given its two base points as vectors. 
+// the apex of each equilateral triangle, given its two base points as vectors.
 
 // Each iteration only creates the left and right triangles, therefore we must find the bottom
 // triangle separately. When we do this, we must also rotate the opposite direction, hence the
 // argument invert which we set to true in that case.
-
 
 var canvas;
 var gl;
 
 var points = [];
 
-var iterations = 9;
+var iterations = 3;
 
 window.onload = function init() {
     // #region WebGL init
@@ -145,4 +144,5 @@ function findTop(u, v, invert = false) {
     
 
     return vec2(x, y);
-}// #endregion
+}
+// #endregion
