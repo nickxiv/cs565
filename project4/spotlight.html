@@ -1,84 +1,108 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>Nick Martin - CS535 - Project #4</title>
+        <script id="vertex-shader" type="x-shader/x-vertex">
 
-<script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec4 vNormal;
 
-attribute vec4 vPosition;
-attribute vec4 vNormal;
-varying vec3 N, L, E;
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-uniform vec4 lightPosition;
-uniform mat3 normalMatrix;
+        varying vec4 fColor;
 
-void main()
-{
-    vec3 light;
-    vec3 pos = (modelViewMatrix * vPosition).xyz;
-    if(lightPosition.z == 0.0)  L = normalize(lightPosition.xyz);
-    else  L = normalize(lightPosition).xyz - pos;
 
-    E =  -normalize(pos);
-    N = normalize( normalMatrix*vNormal.xyz);
-    gl_Position = projectionMatrix * modelViewMatrix * vPosition;
-    
-}
-</script>
+        uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+        uniform vec4 lightPosition;
+        uniform float shininess;
+        uniform float cutoff;
+        uniform vec3 eyePosition;
 
-<script id="fragment-shader" type="x-shader/x-fragment">
 
-precision mediump float;
+        void
+        main()
+        {
+            vec3 surfaceLightDirection;
+            if(lightPosition.w == 0.0)  surfaceLightDirection = normalize( lightPosition.xyz);
+            else  surfaceLightDirection = normalize( (lightPosition - vPosition) .xyz);
 
-uniform vec4 ambientProduct;
-uniform vec4 diffuseProduct;
-uniform vec4 specularProduct;
-uniform float shininess;
-varying vec3 N, L, E;
+            
+            vec3 eyeDirection = normalize( eyePosition);
+            
+            vec3 halfVector = normalize( surfaceLightDirection + eyeDirection );
 
-void main()
-{    
-    vec4 fColor;
-    
-    vec3 H = normalize( L + E );
-    vec4 ambient = ambientProduct;
+            
+            // Transform vertex normal into eye coordinates
+            
+            vec3 normal = normalize(vNormal.xyz);
 
-    float Kd = max( dot(L, N), 0.0 );
-    vec4  diffuse = Kd*diffuseProduct;
+            // Compute terms in the illumination equation
+            vec4 ambient = ambientProduct;
 
-    float Ks = pow( max(dot(N, H), 0.0), shininess );
-    vec4  specular = Ks * specularProduct;
-    
-    if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
+            float Kd = max( dot(surfaceLightDirection, normal), 0.0 );
+            vec4  diffuse = Kd*diffuseProduct;
 
-    fColor = ambient + diffuse +specular;
-    fColor.a = 1.0;
+            float cosine = dot(surfaceLightDirection, -eyeDirection);
+            float Ks = pow( max(dot(normal, halfVector), 0.0), shininess );
+            float  specular = 0.0;
+            float light = 0.0;
+            
+            if (Ks >= cutoff) {
+                light = dot(normal, surfaceLightDirection);
+                if(light > 0.0) {
+                    specular = Ks;
+                } 
+            }
 
-    gl_FragColor = fColor;
-}
-</script>
-<p> </p>
-<button id = "Button0">Increase R</button>
-<button id = "Button1">Decrease R</button>
+            gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+            
+            fColor = ambient + diffuse + specular;
 
-<p> </p>
-<button id = "Button2">Increase theta</button>
-<button id = "Button3">Decrease theta</button>
-<button id = "Button4">Increase phi</button>
-<button id = "Button5">Decrease phi</button>
-<p> </p>
-<button id = "Button6">Increase Subdivisions</button>
-<button id = "Button7">Decrease Subdivisions</button>
+            fColor.a = 1.0;
+        }
+        </script>
 
-<p></p>
+        <script id="fragment-shader" type="x-shader/x-fragment">
 
-<script type="text/javascript" src="../Common/webgl-utils.js"></script>
-<script type="text/javascript" src="../Common/initShaders.js"></script>
-<script type="text/javascript" src="../Common/MV.js"></script>
-<script type="text/javascript" src="shadedSphere4.js"></script>
+        precision mediump float;
 
-<body>
-<canvas id="gl-canvas" width="512" height="512">
-Oops ... your browser doesn't support the HTML5 canvas element
-</canvas>
-</body>
+        varying vec4 fColor;
+
+        void
+        main()
+        {
+
+            gl_FragColor = fColor;
+
+        }
+        </script>
+
+        <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+        <script type="text/javascript" src="../Common/initShaders.js"></script>
+
+        <script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="spotlight.js"></script>
+    </head>
+    <body>
+        <br>
+        <button id = "ButtonA">A</button>
+        <button id = "ButtonB">B</button>
+        <button id = "ButtonC">C</button>
+        <button id = "ButtonD">D</button>
+        <button id = "ButtonE">E</button>
+        <button id = "ButtonF">F</button>
+        <br>
+        <button id = "Button1">1</button>
+        <button id = "Button2">2</button>
+        <button id = "Button3">3</button>
+        <button id = "Button4">4</button>
+        <button id = "Button5">5</button>
+        <br>
+        <button id = "DecreaseCutoff">Decrease cutoff</button>
+        <button id = "IncreaseCutoff">Increase cutoff</button>
+        <br>
+        <canvas id="gl-canvas" width="512" height="512">
+            Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+    </body>
 </html>
