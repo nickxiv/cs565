@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <style type="text/css">
+        canvas { background: blue; }
+    </style>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+
+    attribute  vec4 vPosition;
+    attribute  vec4 vColor;
+    attribute  vec2 vTexCoord;
+
+    varying vec4 fColor;
+    varying vec2 fTexCoord;
+
+    uniform vec3 theta;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+
+    void main()
+    {
+        /* OLD STUFF FROM BASE FILE
+            // Compute the sines and cosines of theta for each of
+            //   the three axes in one computation.
+            vec3 angles = radians( theta );
+            vec3 c = cos( angles );
+            vec3 s = sin( angles );
+
+            // Remeber: thse matrices are column-major
+            mat4 rx = mat4( 1.0,  0.0,  0.0, 0.0,
+                    0.0,  c.x,  s.x, 0.0,
+                    0.0, -s.x,  c.x, 0.0,
+                    0.0,  0.0,  0.0, 1.0 );
+
+            mat4 ry = mat4( c.y, 0.0, -s.y, 0.0,
+                    0.0, 1.0,  0.0, 0.0,
+                    s.y, 0.0,  c.y, 0.0,
+                    0.0, 0.0,  0.0, 1.0 );
+
+            mat4 rz = mat4( c.z, -s.z, 0.0, 0.0,
+                    s.z,  c.z, 0.0, 0.0,
+                    0.0,  0.0, 1.0, 0.0,
+                    0.0,  0.0, 0.0, 1.0 );
+
+            fColor = vColor;
+            fTexCoord = vTexCoord;
+            gl_Position = rz * ry * rx * vPosition;
+        */
+
+        gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+        fTexCoord = vTexCoord;
+        fColor = vColor;
+    }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+
+    precision mediump float;
+
+    varying vec4 fColor;
+    varying  vec2 fTexCoord;
+
+    uniform sampler2D texture;
+
+    void
+    main()
+    {
+        gl_FragColor = fColor * texture2D( texture, fTexCoord );
+        // gl_FragColor = fColor;
+        // gl_FragColor = texture2D( texture, fTexCoord );
+    }
+    </script>
+
+    <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../Common/initShaders.js"></script>
+    <script type="text/javascript" src="../Common/MV.js"></script>
+    <script type="text/javascript" src="blending.js"></script>
+    <head>
+        <title>Nick Martin - CS535 - Project #6</title>
+    </head>
+    <body>  
+        <canvas id="gl-canvas" width="600" height="600">
+        Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+        <br>
+        <button id = "ShiftLeftButton">Shift Left</button>
+        <button id = "ShiftRightButton">Shift Right</button>
+        <br>
+        <button id = "Frame1Button">Frame 1</button>
+        <button id = "Frame2Button">Frame 2</button>
+        <button id = "Frame3Button">Frame 3</button>
+        <button id = "Frame4Button">Frame 4</button>
+        <button id = "Frame5Button">Frame 5</button>
+        <br>
+        <img id = "wallpaper"   src = "wallpaper.png" hidden />
+        <img id = "frame1"      src = "frame1.png" hidden/>
+        <img id = "frame2"      src = "frame2.png" hidden/>
+        <img id = "frame3"      src = "frame3.png" hidden/>
+        <img id = "frame4"      src = "frame4.png" hidden/>
+        <img id = "frame5"      src = "frame5.png" hidden/>
+        <img id = "pres1"        src = "pres1.png" hidden />
+        <img id = "pres2"        src = "pres2.png" hidden />
+        <img id = "pres3"        src = "pres3.png" hidden />
+        <img id = "pres4"        src = "pres4.png" hidden />
+        <img id = "pres5"        src = "pres5.png" hidden />
+        <img id = "pres6"        src = "pres6.png" hidden />
+        <img id = "pres7"        src = "pres7.png" hidden />
+        <img id = "pres8"        src = "pres8.png" hidden />
+        <img id = "pres9"        src = "pres9.png" hidden />
+        <img id = "pres10"        src = "pres10.png" hidden />
+    </body>
+</html>
