@@ -17,7 +17,7 @@
 var canvas;
 var gl;
 
-var numQuadrilaterals = 9;               // 3 interior walls, 3 paintings, 3 frames
+var numQuadrilaterals = 20;               // 3 interior walls, 3 paintings, 3 frames
 var numVertices  = numQuadrilaterals * 6; // 6 vertices per quadrilateral
 
 var program;
@@ -315,6 +315,8 @@ var render = function(){
 }
 
 function textureAndDraw() {
+    if (pointsArray.length != numVertices) console.log("something wrong");
+    console.log(numVertices / numQuadrilaterals);
     gl.bindTexture(gl.TEXTURE_2D, wallpaperTexture);
     gl.drawArrays(gl.TRIANGLES, 0, 3 * numVertices / numQuadrilaterals);
         
